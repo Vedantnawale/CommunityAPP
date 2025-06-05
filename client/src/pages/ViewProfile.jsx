@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Header from '../component/Header';
 
 const ViewProfile = () => {
     const userData = useSelector((state) => state?.auth?.data);
@@ -11,6 +12,8 @@ const ViewProfile = () => {
     const socialLinks = userData?.socialLinks || {};
 
     return (
+        <>
+        <Header />
         <div className="max-w-xl mx-auto mt-6 p-6 bg-gray-100 rounded-2xl shadow-md">
             <div className='flex justify-between items-center'>
                 <h2 className="text-3xl font-semibold text-gray-800 mb-4">
@@ -66,6 +69,7 @@ const ViewProfile = () => {
             </button>
             </Link>
         </div>
+        </>
     );
 };
 

@@ -6,7 +6,8 @@ const storedData = localStorage.getItem('data');
 
 const initialState = {
     isLoggedIn: localStorage.getItem("isLoggedIn") === "true",
-    data: storedData ? JSON.parse(storedData) : {}
+    data: storedData ? JSON.parse(storedData) : {},
+    usersData: []
 }
 
 export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
@@ -71,27 +72,27 @@ export const logout = createAsyncThunk("/auth/logout", async () => {
 });
 
 export const updateProfile = createAsyncThunk(
-  "/user/update/profile",
-  async ({ userId, formData }, { rejectWithValue }) => {
-    try {
-      const resPromise = axiosInstance.put(`user/update/${userId}`, formData, {
-        withCredentials: true,
-      });
+    "/user/update/profile",
+    async ({ userId, formData }, { rejectWithValue }) => {
+        try {
+            const resPromise = axiosInstance.put(`user/update/${userId}`, formData, {
+                withCredentials: true,
+            });
 
-      toast.promise(resPromise, {
-        loading: "Wait! Profile Update In Progress...",
-        success: (res) => res?.data?.message || "Profile updated successfully!",
-        error: (err) =>
-          err?.response?.data?.message || "Failed to update profile",
-      });
+            toast.promise(resPromise, {
+                loading: "Wait! Profile Update In Progress...",
+                success: (res) => res?.data?.message || "Profile updated successfully!",
+                error: (err) =>
+                    err?.response?.data?.message || "Failed to update profile",
+            });
 
-      const res = await resPromise;
-      return res.data;
-    } catch (error) {
-      console.error("Update Profile Error:", error?.response?.data);
-      return rejectWithValue(error?.response?.data?.message);
+            const res = await resPromise;
+            return res.data;
+        } catch (error) {
+            console.error("Update Profile Error:", error?.response?.data);
+            return rejectWithValue(error?.response?.data?.message);
+        }
     }
-  }
 );
 
 
@@ -104,6 +105,17 @@ export const getUserData = createAsyncThunk("/user/details", async () => {
     }
 })
 
+export const getAllDevelopers = createAsyncThunk("/auth/developers", async () => {
+    try {
+        const res = axiosInstance.get("user/developers");
+        const result = (await res)?.data?.data;
+        toast.success("Developers Fetch Successfully");
+        return result;
+    } catch (error) {
+        toast.error(error.message)
+    }
+})
+
 const authSlice = createSlice({
     name: "auth",
     initialState,
@@ -111,6 +123,7 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(signin.fulfilled, (state, action) => {
+                if (!(action?.payload)) return
                 localStorage.setItem("data", JSON.stringify(action?.payload?.data));
                 localStorage.setItem("isLoggedIn", action?.payload?.success);
                 state.isLoggedIn = action?.payload?.success;
@@ -128,7 +141,14 @@ const authSlice = createSlice({
                 localStorage.setItem("isLoggedIn", true);
                 state.isLoggedIn = action?.payload?.success;
                 state.data = action?.payload?.data;
-            });
+            })
+            .addCase(getAllDevelopers.fulfilled, (state, action) => {
+            
+                if (action?.payload) {
+                    state.usersData = action.payload; 
+                }
+            })
+
     }
 })
 export default authSlice.reducer;

@@ -4,6 +4,8 @@ import Login from '../forms/Login'
 import Signup from '../forms/signup'
 import ViewProfile from '../pages/ViewProfile'
 import EditProfile from '../pages/EditProfile'
+import Feed from '../pages/Feed'
+import Developers from '../pages/Developers'
 
 const CustomRoutes = () => {
   return (
@@ -13,6 +15,8 @@ const CustomRoutes = () => {
         <Route path = "/signup" element = { <Signup />} />
         <Route path = "/user" element = { <ViewProfile />} />
         <Route path="/user/update" element = { <EditProfile /> } />
+        <Route path="/posts" element={<Feed />} />
+        <Route path="/developers" element = {< Developers />} />
     </Routes>
   )
 }

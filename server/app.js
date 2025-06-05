@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const authRouter = require('./router/authRouter');
+const postRouter = require('./router/postRouter')
 const cookieParser = require('cookie-parser');
 const errorMiddleware  = require('./middleware/error.middleware');
 
@@ -21,6 +22,7 @@ app.use(cookieParser());
 console.log('CLIENT_URL:', process.env.CLIENT_URL);
 
 app.use('/api/v1/user', authRouter);
+app.use('/api/v1/post', postRouter);
 
 app.use('/', (req, res) => {
     res.status(200).json({

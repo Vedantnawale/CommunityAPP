@@ -2,7 +2,7 @@ const JWT = require('jsonwebtoken')
 
 const jwtAuth = (req, res, next) => {
     const token = req.cookies?.jwt;
-     console.log("JWT token from cookie:", token);
+     //console.log("JWT token from cookie:", token);
     
 
     if(!token){
@@ -14,7 +14,7 @@ const jwtAuth = (req, res, next) => {
 
     try {
         const payload = JWT.verify(token, process.env.SECRET);
-        console.log(payload);
+        //console.log(payload);
         req.user = {id: payload.id, email: payload.email}
     } catch (error) {
          return res.status(400).json({

@@ -43,9 +43,9 @@ exports.signup = async (req, res, next) => {
 
     user.password = undefined;
 
-    const token = await user.jwtToken();
+    //const token = await user.jwtToken();
 
-    res.cookie("jwt", token, cookieOptions);
+    //res.cookie("jwt", token, cookieOptions);
 
     res.status(200).json({
         success: true,
@@ -131,7 +131,6 @@ exports.logout = (req, res) => {
     }
 }
 
-
 exports.editUser = [upload.none(), async (req, res) => {
     try {
         const { fullName, bio } = req.body;
@@ -161,8 +160,6 @@ exports.editUser = [upload.none(), async (req, res) => {
             user.socialLinks.github = socialLinks.github;
         }
 
-        console.log("Updating social links to:", socialLinks);
-
         await user.save();
 
         res.status(200).json({
@@ -179,3 +176,26 @@ exports.editUser = [upload.none(), async (req, res) => {
 }
 ];
 
+
+exports.getDevelopers = async (req, res) => {
+    //console.log("Get Users Called");
+    try {
+        const users = await userModel.find();
+        if (!users) {
+            return res.status(500).json({
+                success: false,
+                message: "No Posts Available"
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: "All Users",
+            data: users
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: true,
+            message: error.message
+        })
+    }
+}
