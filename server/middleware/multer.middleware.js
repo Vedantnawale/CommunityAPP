@@ -1,32 +1,30 @@
-// it is used for uploading files
-const path = require('path');
-const multer = require('multer');
+// middlewares/multer.js
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // this folder must exist
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    cb(null, Date.now() + ext);
+  },
+});
 
 const upload = multer({
-    dest: "uploads/",
-    limits: { fileSize: 50 * 1024 * 1024 }, // 50 mb in size max limit
-    storage: multer.diskStorage({
-        destination: "uploads/",
-        filename: (_req, file, cb) => {
-            cb(null, file.originalname);
-        },
-    }),
-    fileFilter: (_req, file, cb) => {
-        let ext = path.extname(file.originalname);
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    const allowedTypes = /jpeg|jpg|png|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
 
-        if (
-            ext !== ".jpg" &&
-            ext !== ".jpeg" &&
-            ext !== ".webp" &&
-            ext !== ".png" &&
-            ext !== ".mp4"
-        ) {
-            cb(new Error(`Unsupported file type! ${ext}`), false);
-            return;
-        }
-
-        cb(null, true);
-    },
+    if (extname && mimetype) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only images are allowed"));
+    }
+  },
 });
 
 module.exports = upload;

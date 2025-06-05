@@ -9,6 +9,6 @@ authRouter.post('/signin', signin);
 authRouter.get('/user', jwtAuth, getUser);
 authRouter.get('/developers', jwtAuth, getDevelopers);
 authRouter.get('/logout', jwtAuth, logout);
-authRouter.put('/update/:id', jwtAuth, editUser);
+authRouter.put('/update/:id', upload.single('avatar'), jwtAuth, editUser);
 
 module.exports = authRouter;

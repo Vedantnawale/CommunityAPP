@@ -8,6 +8,7 @@ const EditProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userData = useSelector((state) => state?.auth?.data);
+  const [selectedFile, setSelectedFile] = useState(null);
 
 
   const [data, setData] = useState({
@@ -17,10 +18,10 @@ const EditProfile = () => {
     socialLinks: {
       linkedin: '',
       github: ''
-    }
+    },
+    avatar: ''
   });
 
-  // Prefill form when userData is available
   useEffect(() => {
     if (userData) {
       setData({
@@ -30,7 +31,8 @@ const EditProfile = () => {
         socialLinks: {
           linkedin: userData.socialLinks?.linkedin || '',
           github: userData.socialLinks?.github || ''
-        }
+        },
+        avatar: userData.avatar || ''
       });
     }
   }, [userData]);
@@ -68,6 +70,7 @@ const EditProfile = () => {
     formData.append('skills', JSON.stringify(data.skills.split(',').map(skill => skill.trim())));
     formData.append('linkedin', data.socialLinks.linkedin);
     formData.append('github', data.socialLinks.github);
+    formData.append("avatar", selectedFile);
 
 
 
@@ -83,6 +86,11 @@ const EditProfile = () => {
     <div className="max-w-xl mx-auto mt-6 p-6 bg-white rounded-2xl shadow-md">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Edit Profile</h2>
       <form onSubmit={handleFormSubmit}>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+        />
         <label className="block mb-2 text-sm font-medium text-gray-700">Full Name</label>
         <input
           type="text"

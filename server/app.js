@@ -17,6 +17,8 @@ app.use(cors({
     credentials: true,
 }))
 
+app.use("/uploads", express.static("uploads"));
+
 app.use(cookieParser());
 
 console.log('CLIENT_URL:', process.env.CLIENT_URL);

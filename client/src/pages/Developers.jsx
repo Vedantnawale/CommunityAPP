@@ -24,7 +24,7 @@ const Developers = () => {
   const filteredDevelopers = (developers || []).filter((dev) => {
     const nameMatch = dev.fullName?.toLowerCase().includes(searchTerm.toLowerCase());
     const skillMatch = selectedSkill ? (dev.skills || []).includes(selectedSkill) : true;
-    return nameMatch && skillMatch && dev._id !== userId; 
+    return nameMatch && skillMatch && dev._id !== userId;
   });
 
   return (
@@ -62,7 +62,11 @@ const Developers = () => {
           {filteredDevelopers.map((dev) => (
             <div key={dev._id} className="bg-white rounded-xl shadow-md p-4">
               <img
-                src={dev.avatar || 'https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI='}
+                src={
+                  dev.avatar
+                    ? `http://localhost:4500/uploads/${dev.avatar}`
+                    : 'https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI='
+                }
                 alt={dev.fullName}
                 className="w-16 h-16 rounded-full mx-auto mb-4"
               />

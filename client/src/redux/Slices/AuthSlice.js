@@ -76,6 +76,7 @@ export const updateProfile = createAsyncThunk(
     async ({ userId, formData }, { rejectWithValue }) => {
         try {
             const resPromise = axiosInstance.put(`user/update/${userId}`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
                 withCredentials: true,
             });
 

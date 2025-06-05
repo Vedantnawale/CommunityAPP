@@ -1,9 +1,10 @@
 const userModel = require("../model/userSchema");
-const multer = require("multer");
+
 
 const bcrypt = require('bcrypt');
 
 const { default: AppError } = require("../utilis/error.util");
+const upload = require("../middleware/multer.middleware");
 
 const cookieOptions = {
     httpOnly: true,
@@ -13,7 +14,8 @@ const cookieOptions = {
 
 }
 
-const upload = multer();
+
+
 
 exports.signup = async (req, res, next) => {
     const { fullName, email, password } = req.body;
@@ -131,51 +133,43 @@ exports.logout = (req, res) => {
     }
 }
 
-exports.editUser = [upload.none(), async (req, res) => {
+exports.editUser = async (req, res) => {
     try {
         const { fullName, bio } = req.body;
-        const skills = JSON.parse(req.body.skills || '[]');
+        const skills = JSON.parse(req.body.skills || "[]");
+
         const socialLinks = {
-            linkedin: req.body.linkedin || '',
-            github: req.body.github || ''
+            linkedin: req.body.linkedin || "",
+            github: req.body.github || "",
         };
 
-
         const { id } = req.params;
-
         const user = await userModel.findById(id);
+
         if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: "Authorization Failed"
-            });
+            return res.status(400).json({ success: false, message: "User not found" });
         }
 
-        if (fullName) user.fullName = fullName;
-        if (bio) user.bio = bio;
-        if (Array.isArray(skills)) user.skills = skills;
+        user.fullName = fullName;
+        user.bio = bio;
+        user.skills = skills;
+        user.socialLinks = socialLinks;
 
-        if (socialLinks) {
-            user.socialLinks.linkedin = socialLinks.linkedin;
-            user.socialLinks.github = socialLinks.github;
+        if (req.file) {
+            user.avatar = req.file.filename; // ✅ multer adds this if storage is correct
         }
 
         await user.save();
 
         res.status(200).json({
             success: true,
-            message: "User details updated successfully!",
-            user
+            message: "Profile updated",
+            user,
         });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message || "Something went wrong"
-        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
     }
-}
-];
-
+};
 
 exports.getDevelopers = async (req, res) => {
     //console.log("Get Users Called");
