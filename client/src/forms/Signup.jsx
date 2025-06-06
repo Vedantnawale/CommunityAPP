@@ -7,61 +7,64 @@ import { createAccount } from "../redux/Slices/AuthSlice";
 
 const Signup = () => {
 
-   const dispatch = useDispatch();
-    const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
 
 
-    const [signupData, setSignupData] = useState({
-        fullName: "",
-        email: "",
-        password: "",
-        avatar: ""
+  const [signupData, setSignupData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    avatar: "",
+    role: ""
+  });
+
+  function handleUserInput(e) {
+    const { name, value } = e.target
+    setSignupData({
+      ...signupData,
+      [name]: value
+    })
+  }
+
+
+
+  async function createNewAccount(event) {
+    event.preventDefault();
+    if (!signupData.email || !signupData.password || !signupData.fullName) {
+      toast.error("Please fill all the details")
+    }
+    // checking name field length
+    if (signupData.fullName.length < 5) {
+      toast.error("Name should be atleast of 5 characters")
+      return;
+    }
+
+
+
+    const formData = new FormData();
+
+    formData.append("fullName", signupData.fullName);
+    formData.append("email", signupData.email);
+    formData.append("password", signupData.password);
+    formData.append("role", signupData.role);
+
+    // dispatch create account action
+    const response = await dispatch(createAccount(formData))
+    console.log(response);
+
+    if (response?.payload?.success)
+      navigate("/signin");
+
+    setSignupData({
+      fullName: "",
+      email: "",
+      password: "",
+      role: ""
     });
 
-    function handleUserInput(e) {
-        const { name, value } = e.target
-        setSignupData({
-            ...signupData,
-            [name]: value
-        })
-    }
-
-    
-
-    async function createNewAccount(event) {
-        event.preventDefault();
-        if (!signupData.email || !signupData.password || !signupData.fullName) {
-            toast.error("Please fill all the details")
-        }
-        // checking name field length
-        if (signupData.fullName.length < 5) {
-            toast.error("Name should be atleast of 5 characters")
-            return;
-        }
-
-  
-
-        const formData = new FormData();
-
-        formData.append("fullName", signupData.fullName);
-        formData.append("email", signupData.email);
-        formData.append("password", signupData.password);
-
-        // dispatch create account action
-        const response = await dispatch(createAccount(formData))
-        console.log(response);
-
-        if (response?.payload?.success)
-            navigate("/signin");
-
-        setSignupData({
-            fullName: "",
-            email: "",
-            password: ""
-        });
-
-
-    }
+    console.log(signupData.role);
+  }
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center">
@@ -115,7 +118,23 @@ const Signup = () => {
               className="w-full px-4 py-2 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             />
           </div>
-          
+          <div>
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-white mt-4">
+              Select Role
+            </label>
+            <select
+              name="role"
+              id="role"
+              onChange={handleUserInput}
+              value={signupData.role}
+              required
+              className="w-full px-4 py-2 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+            >
+              <option value="User">User</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </div>
+
           <div className="flex items-start">
             <input
               id="terms"
@@ -130,7 +149,7 @@ const Signup = () => {
               </a>
             </label>
           </div>
-          <button 
+          <button
             type="submit"
             className="w-full px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >

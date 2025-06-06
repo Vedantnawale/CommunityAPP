@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { FaComment, FaHeart, FaShareAlt } from "react-icons/fa";
-import { getAllPosts, toggleLike, addComment, deleteComment } from "../redux/Slices/PostSlice";
+import { getAllPosts, toggleLike, addComment, deleteComment, deletePostByAdmin } from "../redux/Slices/PostSlice";
 import Header from "../component/Header";
+import useIsAdmin from "../helpers/checkRole";
 
 const Feed = () => {
   const dispatch = useDispatch();
   const { postData } = useSelector((state) => state.posts);
   const user = JSON.parse(localStorage.getItem("data"));
+  console.log(user);
   const [commentInputs, setCommentInputs] = useState({});
+
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     dispatch(getAllPosts());
@@ -74,6 +78,22 @@ const Feed = () => {
                   <span className="flex items-center gap-1 cursor-pointer">
                     <FaShareAlt /> Share
                   </span>
+                  {/* Delete Post Button */}
+                  {
+                    isAdmin && (
+                      <div className="mt-2 space-y-1 text-sm">
+                          <div key={post._id} className="flex justify-between items-center bg-gray-100 px-3 py-2 rounded">
+                              <button
+                                onClick={() => dispatch(deletePostByAdmin({ userId : user._id, postId: post._id}))}
+                                className="text-red-500 text-xs"
+                              >
+                                Delete
+                              </button>
+                          </div>
+                      </div>
+                    )
+
+                  }
                 </div>
 
                 {/* Comment Section */}
@@ -113,6 +133,7 @@ const Feed = () => {
                     </div>
                   ))}
                 </div>
+
 
 
               </div>

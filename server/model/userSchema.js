@@ -27,14 +27,18 @@ const userSchema = new Schema({
         type: String,
         default: '',
     },
-
     skills: {
         type: [String],
         default: []
     },
-    avatar : {
+    avatar: {
         type: String,
         default: ''
+    },
+    role: {
+        type: String,
+        enum: ['User', 'Admin'],
+        default: 'User'
     },
 
     socialLinks: {

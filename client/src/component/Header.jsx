@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/Slices/AuthSlice';
+import useIsAdmin from '../helpers/checkRole';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +14,8 @@ const Header = () => {
     const res = await dispatch(logout());
     if (res?.payload?.success) navigate('/');
   };
+
+  const isAdmin = useIsAdmin();
 
   return (
     <header className="flex items-center justify-between p-4 border-b bg-white">
@@ -35,17 +38,19 @@ const Header = () => {
             isActive ? 'text-blue-600 font-bold' : 'text-gray-700'
           }
         >
-          Feed
+          {isAdmin ? 'Dashboard' : 'Feed'}
         </NavLink>
+        {!isAdmin &&
+          <NavLink
+            to="/developers"
+            className={({ isActive }) =>
+              isActive ? 'text-blue-600 font-bold' : 'text-gray-700'
+            }
+          >
+            Developers
+          </NavLink>
+        }
 
-        <NavLink
-          to="/developers"
-          className={({ isActive }) =>
-            isActive ? 'text-blue-600 font-bold' : 'text-gray-700'
-          }
-        >
-          Developers
-        </NavLink>
       </nav>
       <div className="flex items-center gap-4">
         <button className="text-xl">🔔</button>

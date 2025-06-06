@@ -73,6 +73,10 @@ export const deleteComment = createAsyncThunk(
     }
 );
 
+export const deletePostByAdmin = createAsyncThunk("posts/deletePostByAdmin", async ({ userId, postId }, { dispatch }) => {
+    await axiosInstance.delete(`/post/admin/delete-post/${userId}/${postId}`);
+    return { userId, postId };
+})
 
 
 
@@ -114,6 +118,11 @@ const postSlice = createSlice({
                     post.comments.push(comment);
                 }
             })
+            .addCase(deletePostByAdmin.fulfilled, (state, action) => {
+                const { postId } = action.payload;
+                state.postData = state.postData.filter(p => p._id !== postId);
+            })
+
             .addCase(deleteComment.fulfilled, (state, action) => {
                 const { postId, commentId } = action.payload;
                 const post = state.postData.find(p => p._id === postId);

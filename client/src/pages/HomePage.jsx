@@ -4,9 +4,13 @@ import NotLogin from '../component/NotLogin';
 import CreatePost from './CreatePost';
 import Header from '../component/Header'
 import Footer from '../component/Footer';
+import useIsAdmin from '../helpers/checkRole';
+
+import adminImage from '../assets/admin_home.png'
 
 const HomePage = () => {
   const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
+  const isAdmin = useIsAdmin();
 
   return (
     <>
@@ -15,8 +19,19 @@ const HomePage = () => {
           <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
             <Header />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+              {!isAdmin &&
+                <CreatePost />
+              }
+              {isAdmin && (
+                <div className="md:col-span-2 space-y-4">
+                  <img
+                    className="w-full h-96 rounded-lg shadow-md"
+                    src={adminImage}
+                    alt="Admin Panel"
+                  />
+                </div>
+              )}
 
-              <CreatePost />
 
               <aside className="space-y-6">
                 <div className="bg-white rounded-xl shadow p-4">
@@ -44,7 +59,10 @@ const HomePage = () => {
               </aside>
             </div>
           </div>
-          <Footer />
+          <div>
+            <Footer />
+          </div>
+
         </div>
       ) : (
         <NotLogin />

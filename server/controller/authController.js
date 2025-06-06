@@ -4,7 +4,7 @@ const userModel = require("../model/userSchema");
 const bcrypt = require('bcrypt');
 
 const { default: AppError } = require("../utilis/error.util");
-const upload = require("../middleware/multer.middleware");
+// const upload = require("../middleware/multer.middleware");
 
 const cookieOptions = {
     httpOnly: true,
@@ -18,7 +18,7 @@ const cookieOptions = {
 
 
 exports.signup = async (req, res, next) => {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, role } = req.body;
 
     if (!fullName || !email || !password) {
         return next(new AppError('All fields are required', 400)); // isko capture karo or aage bhej do
@@ -34,6 +34,7 @@ exports.signup = async (req, res, next) => {
         fullName,
         email,
         password,
+        role
     })
 
     if (!user) {
@@ -156,7 +157,7 @@ exports.editUser = async (req, res) => {
         user.socialLinks = socialLinks;
 
         if (req.file) {
-            user.avatar = req.file.filename; // ✅ multer adds this if storage is correct
+            user.avatar = req.file.filename;
         }
 
         await user.save();
