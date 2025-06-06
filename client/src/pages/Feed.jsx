@@ -22,7 +22,7 @@ const Feed = () => {
   }, [dispatch]);
 
   const handleLike =  (postId) => {
-     dispatch(toggleLike(postId)).unwrap();
+     dispatch(toggleLike(postId));
   };
 
   const handleComment = (postId) => {

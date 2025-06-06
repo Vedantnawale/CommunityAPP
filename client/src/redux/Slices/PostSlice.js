@@ -51,10 +51,10 @@ export const getAllPosts = createAsyncThunk("/post/posts", async (_, thunkAPI) =
 
 // Like or Unlike Post
 export const toggleLike = createAsyncThunk(
-    "post/toggleLike",
+    "posts/toggleLike",
     async (postId, { rejectWithValue }) => {
         try {
-            await axiosInstance.put(`/post/like/${postId}`, {}, { withCredentials: true });
+            const res = await axiosInstance.post(`/post/like/${postId}`);
             return { postId }; 
         } catch (error) {
             return rejectWithValue(error.response?.data || { message: error.message });
@@ -135,26 +135,19 @@ const postSlice = createSlice({
                 state.selectedPost = null;
             })
             .addCase(toggleLike.fulfilled, (state, action) => {
-                const payload = action.payload;
-                if (!payload || !payload.postId) return; 
+                const { postId } = action.payload;
+                const userId = JSON.parse(localStorage.getItem("data"))._id;
 
-                const { postId } = payload;
-                const userId = JSON.parse(localStorage.getItem("data"))?._id;
-
-                state.postData = state.postData.map((post) => {
-                    if (post._id === postId) {
-                        const hasLiked = post.likes.includes(userId);
-                        return {
-                            ...post,
-                            likes: hasLiked
-                                ? post.likes.filter((id) => id !== userId)
-                                : [...post.likes, userId],
-                        };
+                const post = state.postData.find((p) => p._id === postId);
+                if (post) {
+                    const index = post.likes.indexOf(userId);
+                    if (index === -1) {
+                        post.likes.push(userId);
+                    } else {
+                        post.likes.splice(index, 1);
                     }
-                    return post;
-                });
+                }
             })
-
             .addCase(addComment.fulfilled, (state, action) => {
                 const { postId, comment } = action.payload;
                 const post = state.postData.find((p) => p._id === postId);
