@@ -9,7 +9,7 @@ const Feed = () => {
   const dispatch = useDispatch();
   const { postData } = useSelector((state) => state.posts);
   const user = JSON.parse(localStorage.getItem("data"));
-  console.log(user);
+  //console.log(user);
   const [commentInputs, setCommentInputs] = useState({});
 
 

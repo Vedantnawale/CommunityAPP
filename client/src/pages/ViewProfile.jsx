@@ -5,7 +5,7 @@ import Header from '../component/Header';
 
 const ViewProfile = () => {
     const userData = useSelector((state) => state?.auth?.data);
-    console.log("User Data:", userData);
+    //console.log("User Data:", userData);
 
     const skills = (userData?.skills) || [];
     const bio = (userData?.bio) || 'No bio added yet.';

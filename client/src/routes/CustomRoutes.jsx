@@ -7,20 +7,25 @@ import EditProfile from '../pages/EditProfile'
 import Feed from '../pages/Feed'
 import Developers from '../pages/Developers'
 import AdminDashBoard from '../pages/AdminDashBoard'
+import { useSelector } from 'react-redux'
 
 const CustomRoutes = () => {
+  const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/signin" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/user" element={<ViewProfile />} />
-      <Route path="/user/update" element={<EditProfile />} />
-      <Route path="/posts" element={<Feed />} />
-      <Route path="/developers" element={< Developers />} />
 
-      <Route path="/admin/dashboard" element={<AdminDashBoard />} />
-
+      {isLoggedIn && (
+        <>
+          <Route path="/user" element={<ViewProfile />} />
+          <Route path="/user/update" element={<EditProfile />} />
+          <Route path="/posts" element={<Feed />} />
+          <Route path="/developers" element={<Developers />} />
+          <Route path="/admin/dashboard" element={<AdminDashBoard />} />
+        </>
+      )}
 
 
     </Routes>

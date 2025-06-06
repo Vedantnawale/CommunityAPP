@@ -57,7 +57,7 @@ export const signin = createAsyncThunk("/auth/signin", async (data) => {
 
 export const logout = createAsyncThunk("/auth/logout", async () => {
     try {
-        const res = axiosInstance.post("user/logout");
+        const res = axiosInstance.get("user/logout");
         toast.promise(res, {
             loading: "Wait! logout in progress...",
             success: (data) => {
@@ -132,21 +132,27 @@ const authSlice = createSlice({
             })
             // for user logout
             .addCase(logout.fulfilled, (state) => {
-                localStorage.clear();
+                localStorage.removeItem('data');
+                localStorage.removeItem('isLoggedIn');
                 state.isLoggedIn = false;
                 state.data = {};
             })
+
+
+            // .addCase(getUserData.fulfilled, (state, action) => {
+            //     //state.data = action?.payload?.user;
+            // })
             .addCase(updateProfile.fulfilled, (state, action) => {
-                if (!action?.payload?.data) return;
-                localStorage.setItem("data", JSON.stringify(action?.payload?.data));
-                localStorage.setItem("isLoggedIn", true);
-                state.isLoggedIn = action?.payload?.success;
-                state.data = action?.payload?.data;
+                if (!action?.payload?.user) return;
+                // state.isLoggedIn = action?.payload?.success;
+                localStorage.setItem("data", JSON.stringify(action?.payload?.user));
+                console.log(action?.payload)
+                state.data = action?.payload?.user;
             })
             .addCase(getAllDevelopers.fulfilled, (state, action) => {
-            
+
                 if (action?.payload) {
-                    state.usersData = action.payload; 
+                    state.usersData = action.payload;
                 }
             })
 

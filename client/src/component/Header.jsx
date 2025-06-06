@@ -77,14 +77,12 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/">
-                    <button
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </button>
-                  </Link>
+                  <button
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
                 </li>
               </ul>
             </div>

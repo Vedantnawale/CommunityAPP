@@ -116,12 +116,13 @@ exports.getUser = async (req, res) => {
 }
 
 exports.logout = (req, res) => {
+    console.log("Logout Called")
     try {
         const cookieOption = {
             expires: new Date(),
             httpOnly: true
         }
-        res.cookie("token", null, cookieOption);
+        res.cookie("jwt", null, cookieOption);
         res.status(200).json({
             success: true,
             message: "Logout Successfully"
