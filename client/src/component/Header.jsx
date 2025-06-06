@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../redux/Slices/AuthSlice';
 import useIsAdmin from '../helpers/checkRole';
 
@@ -8,6 +8,10 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const user = useSelector((state) => state?.auth?.data);
+
+  const userProfile = `http://localhost:4500/uploads/${user.avatar}`;
 
   const handleLogout = async (event) => {
     event.preventDefault();
@@ -55,11 +59,12 @@ const Header = () => {
       <div className="flex items-center gap-4">
         <button className="text-xl">🔔</button>
         <div className="relative inline-block text-left">
-          <button
+          <img
             className="w-8 h-8 rounded-full bg-gray-300"
-            title="Profile"
+            src={userProfile}
+            alt="Profile"
             onClick={() => setIsOpen(!isOpen)}
-          ></button>
+          />
 
           {isOpen && (
             <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg z-10">

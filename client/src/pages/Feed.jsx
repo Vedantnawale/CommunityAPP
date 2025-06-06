@@ -12,6 +12,7 @@ const Feed = () => {
   console.log(user);
   const [commentInputs, setCommentInputs] = useState({});
 
+
   const isAdmin = useIsAdmin();
 
   useEffect(() => {
@@ -41,7 +42,15 @@ const Feed = () => {
                 {/* Post Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-300" />
+                    <img
+                      src={
+                        post?.author?.avatar
+                          ? `http://localhost:4500/uploads/${post?.author?.avatar}`
+                          : 'https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI='
+                      }
+                      alt="User Profile"
+                      className="w-10 h-10 rounded-full bg-gray-300"
+                    />
                     <div>
                       <div className="font-semibold">
                         {post.author?.fullName}
@@ -82,14 +91,14 @@ const Feed = () => {
                   {
                     isAdmin && (
                       <div className="mt-2 space-y-1 text-sm">
-                          <div key={post._id} className="flex justify-between items-center bg-gray-100 px-3 py-2 rounded">
-                              <button
-                                onClick={() => dispatch(deletePostByAdmin({ userId : user._id, postId: post._id}))}
-                                className="text-red-500 text-xs"
-                              >
-                                Delete
-                              </button>
-                          </div>
+                        <div key={post._id} className="flex justify-between items-center bg-gray-100 px-3 py-2 rounded">
+                          <button
+                            onClick={() => dispatch(deletePostByAdmin({ userId: user._id, postId: post._id }))}
+                            className="text-red-500 text-xs"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     )
 
