@@ -8,9 +8,12 @@ import Feed from '../pages/Feed'
 import Developers from '../pages/Developers'
 import AdminDashBoard from '../pages/AdminDashBoard'
 import { useSelector } from 'react-redux'
+import NotFound from '../pages/NotFound'
+import useIsAdmin from '../helpers/checkRole'
 
 const CustomRoutes = () => {
   const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
+  const isAdmin = useIsAdmin();
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
@@ -22,10 +25,15 @@ const CustomRoutes = () => {
           <Route path="/user" element={<ViewProfile />} />
           <Route path="/user/update" element={<EditProfile />} />
           <Route path="/posts" element={<Feed />} />
-          <Route path="/developers" element={<Developers />} />
+          
+          { !isAdmin &&
+            <Route path="/developers" element={<Developers />} />
+          }
+          
           <Route path="/admin/dashboard" element={<AdminDashBoard />} />
         </>
       )}
+      <Route path="*" element={<NotFound />}></Route>
 
 
     </Routes>
