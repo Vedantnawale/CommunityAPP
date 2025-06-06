@@ -25,6 +25,16 @@ export const createNewPost = createAsyncThunk("/post/create", async (data) => {
 });
 
 
+export const getSinglePost = createAsyncThunk("/post/getPost", async (postId) => {
+    try {
+        const res = await axiosInstance.get(`/post/${postId}`);
+        console.log(res.data)
+        return res.data.post;
+    } catch (error) {
+        return error.response.data
+    }
+})
+
 
 export const getAllPosts = createAsyncThunk("/post/posts", async (_, thunkAPI) => {
     try {
@@ -41,16 +51,32 @@ export const getAllPosts = createAsyncThunk("/post/posts", async (_, thunkAPI) =
 
 // Like or Unlike Post
 export const toggleLike = createAsyncThunk(
-    "posts/toggleLike",
+    "post/toggleLike",
     async (postId, { rejectWithValue }) => {
         try {
-            const res = await axiosInstance.post(`/post/like/${postId}`);
-            return { postId };
+            await axiosInstance.put(`/post/like/${postId}`, {}, { withCredentials: true });
+            return { postId }; 
+        } catch (error) {
+            return rejectWithValue(error.response?.data || { message: error.message });
+        }
+    }
+);
+
+
+export const editPostById = createAsyncThunk(
+    "post/edit",
+    async ({ postId, content }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(`/post/edit-post/${postId}`, { content }, {
+                withCredentials: true,
+            });
+            return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
     }
 );
+
 
 // Add Comment
 export const addComment = createAsyncThunk(
@@ -97,20 +123,38 @@ const postSlice = createSlice({
                     state.postData.unshift(action.payload.post);
                 }
             })
-            .addCase(toggleLike.fulfilled, (state, action) => {
-                const { postId } = action.payload;
-                const userId = JSON.parse(localStorage.getItem("data"))._id;
-
-                const post = state.postData.find((p) => p._id === postId);
-                if (post) {
-                    const index = post.likes.indexOf(userId);
-                    if (index === -1) {
-                        post.likes.push(userId);
-                    } else {
-                        post.likes.splice(index, 1);
-                    }
-                }
+            .addCase(getSinglePost.fulfilled, (state, action) => {
+                state.selectedPost = action.payload;
             })
+            .addCase(editPostById.fulfilled, (state, action) => {
+                const updated = action.payload.post;
+                const index = state.postData.findIndex((p) => p._id === updated._id);
+                if (index !== -1) {
+                    state.postData[index] = updated;
+                }
+                state.selectedPost = null;
+            })
+            .addCase(toggleLike.fulfilled, (state, action) => {
+                const payload = action.payload;
+                if (!payload || !payload.postId) return; 
+
+                const { postId } = payload;
+                const userId = JSON.parse(localStorage.getItem("data"))?._id;
+
+                state.postData = state.postData.map((post) => {
+                    if (post._id === postId) {
+                        const hasLiked = post.likes.includes(userId);
+                        return {
+                            ...post,
+                            likes: hasLiked
+                                ? post.likes.filter((id) => id !== userId)
+                                : [...post.likes, userId],
+                        };
+                    }
+                    return post;
+                });
+            })
+
             .addCase(addComment.fulfilled, (state, action) => {
                 const { postId, comment } = action.payload;
                 const post = state.postData.find((p) => p._id === postId);

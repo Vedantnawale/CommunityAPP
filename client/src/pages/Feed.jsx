@@ -4,6 +4,7 @@ import { FaComment, FaHeart, FaShareAlt } from "react-icons/fa";
 import { getAllPosts, toggleLike, addComment, deleteComment, deletePostByAdmin } from "../redux/Slices/PostSlice";
 import Header from "../component/Header";
 import useIsAdmin from "../helpers/checkRole";
+import { Link } from "react-router-dom";
 
 const Feed = () => {
   const dispatch = useDispatch();
@@ -13,14 +14,15 @@ const Feed = () => {
   const [commentInputs, setCommentInputs] = useState({});
 
 
+
   const isAdmin = useIsAdmin();
 
   useEffect(() => {
     dispatch(getAllPosts());
   }, [dispatch]);
 
-  const handleLike = (postId) => {
-    dispatch(toggleLike(postId));
+  const handleLike =  (postId) => {
+     dispatch(toggleLike(postId)).unwrap();
   };
 
   const handleComment = (postId) => {
@@ -88,6 +90,18 @@ const Feed = () => {
                     <FaShareAlt /> Share
                   </span>
                   {/* Delete Post Button */}
+                  { (post?.author?._id.toString() === user._id) && (
+                    <div className="mt-2 space-y-1 text-sm">
+                      <div key={post._id} className="flex justify-between items-center bg-gray-100 px-3 py-2 rounded">
+                        <Link to={`/edit/${post._id}`}>
+                          <button className="text-green-500 text-xs">
+                            Edit
+                          </button>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+
                   {
                     isAdmin && (
                       <div className="mt-2 space-y-1 text-sm">

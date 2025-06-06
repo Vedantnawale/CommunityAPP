@@ -219,4 +219,39 @@ exports.deleteComment = async (req, res) => {
     }
 };
 
+exports.editPost = async (req, res) => {
+  const { postId } = req.params;
+  const userId = req.user.id;
+  try {
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User Not Found" });
+    }
+
+    const post = await Post.findById(postId).populate("author");
+    if (!post) {
+      return res.status(404).json({ success: false, message: "Post Not Found" });
+    }
+
+    if (post?.author?._id.toString() !== userId) {
+      return res.status(403).json({ success: false, message: "You can't edit this post" });
+    }
+
+    const { content } = req.body;
+    if (content) {
+      post.content = content;
+      post.updatedAt = Date.now(); 
+    }
+
+    await post.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Post Updated Successfully",
+      post,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
 
